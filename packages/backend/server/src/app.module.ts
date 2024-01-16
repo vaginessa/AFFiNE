@@ -28,6 +28,7 @@ import { GqlModule } from './fundamentals/graphql';
 import { MailModule } from './fundamentals/mailer';
 import { MetricsModule } from './fundamentals/metrics';
 import { PrismaModule } from './fundamentals/prisma';
+import { RuntimeSettingModule } from './fundamentals/runtime';
 import { SessionModule } from './fundamentals/session';
 import { StorageProviderModule } from './fundamentals/storage';
 import { RateLimiterModule } from './fundamentals/throttler';
@@ -45,6 +46,7 @@ export const FunctionalityModules = [
   SessionModule,
   MailModule,
   StorageProviderModule,
+  RuntimeSettingModule,
 ];
 
 export class AppModuleBuilder {
