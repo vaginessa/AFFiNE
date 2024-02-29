@@ -5,6 +5,8 @@ import { PrismaClient } from '@prisma/client';
 
 import { CryptoHelper } from '../../fundamentals/helpers';
 
+type Transaction = Parameters<Parameters<PrismaClient['$transaction']>[0]>[0];
+
 export enum TokenType {
   SignIn,
   VerifyEmail,
@@ -51,25 +53,8 @@ export class TokenService {
     } = {}
   ) {
     token = this.crypto.decrypt(token);
-    const record = await this.db.verificationToken.findUnique({
-      where: {
-        type_token: {
-          token,
-          type,
-        },
-      },
-    });
-
-    if (!record) {
-      return null;
-    }
-
-    const expired = record.expiresAt <= new Date();
-    const valid =
-      !expired && (!record.credential || record.credential === credential);
-
-    if ((expired || valid) && !keep) {
-      await this.db.verificationToken.delete({
+    return await this.db.$transaction(async tx => {
+      const record = await this.db.verificationToken.findUnique({
         where: {
           type_token: {
             token,
@@ -77,8 +62,33 @@ export class TokenService {
           },
         },
       });
-    }
 
-    return valid ? record : null;
+      if (!record) {
+        return null;
+      }
+
+      const expired = record.expiresAt <= new Date();
+      const valid =
+        !expired && (!record.credential || record.credential === credential);
+
+      // always revoke expired token
+      if (expired || (valid && !keep)) {
+        await this.revokeToken(type, token, tx);
+      }
+
+      return valid ? record : null;
+    });
+  }
+
+  async revokeToken(type: TokenType, token: string, tx?: Transaction) {
+    const client = tx || this.db;
+    await client.verificationToken.delete({
+      where: {
+        type_token: {
+          token,
+          type,
+        },
+      },
+    });
   }
 }
