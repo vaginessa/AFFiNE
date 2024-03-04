@@ -84,9 +84,9 @@ AFFiNE.port = 3010;
 /* Redis Plugin */
 /* Provide caching and session storing backed by Redis. */
 /* Useful when you deploy AFFiNE server in a cluster. */
-AFFiNE.plugins.use('redis', {
-  /* override options */
-});
+// AFFiNE.plugins.use('redis', {
+//   /* override options */
+// });
 
 /* Payment Plugin Default Config */
 AFFiNE.plugins.use('payment', {
