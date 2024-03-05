@@ -95,9 +95,7 @@ AFFiNE.plugins.use('payment', {
 
 /* Captcha Plugin Default Config */
 AFFiNE.plugins.use('captcha', {
-  turnstile: {
-    secret: '1x0000000000000000000000000000000AA',
-  },
+  turnstile: {},
   challenge: {
     bits: 20,
   },
