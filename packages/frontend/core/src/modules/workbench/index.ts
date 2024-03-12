@@ -1,5 +1,6 @@
 export { View } from './entities/view';
 export { Workbench } from './entities/workbench';
+export { multiViewEnabled } from './view/enable-multi-view';
 export { useIsActiveView } from './view/use-is-active-view';
 export { ViewBodyIsland } from './view/view-body-island';
 export { ViewHeaderIsland } from './view/view-header-island';

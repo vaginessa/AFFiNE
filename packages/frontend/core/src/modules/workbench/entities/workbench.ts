@@ -100,6 +100,7 @@ export class Workbench {
   }
 
   closeOthers(view: View) {
+    this.active(this.views.value.indexOf(view));
     view.size.next(100);
     this.views.next([view]);
   }

@@ -8,6 +8,7 @@ export const sidebarContainerInner = style({
   overflow: 'hidden',
   height: '100%',
   width: '100%',
+  borderRadius: 'inherit',
 });
 
 export const sidebarContainer = style({
@@ -16,7 +17,8 @@ export const sidebarContainer = style({
   height: '100%',
   selectors: {
     [`&[data-client-border=true]`]: {
-      paddingLeft: 9,
+      paddingLeft: 8,
+      borderRadius: 6,
     },
     [`&[data-client-border=false]`]: {
       borderLeft: `1px solid ${cssVar('borderColor')}`,

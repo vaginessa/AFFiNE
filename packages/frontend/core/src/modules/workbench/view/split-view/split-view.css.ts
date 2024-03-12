@@ -17,7 +17,7 @@ export const splitViewRoot = style({
   selectors: {
     '&[data-client-border="true"]': {
       vars: {
-        [gap]: '6px',
+        [gap]: '8px',
         [borderRadius]: '6px',
       },
     },
@@ -124,12 +124,4 @@ export const resizeHandle = style({
     // vertical
     // TODO
   },
-});
-
-export const menuTrigger = style({
-  position: 'absolute',
-  left: '50%',
-  top: 3,
-  transform: 'translateX(-50%)',
-  zIndex: 10,
 });

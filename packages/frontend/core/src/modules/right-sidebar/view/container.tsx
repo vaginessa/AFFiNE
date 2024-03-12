@@ -39,7 +39,7 @@ export const RightSidebarContainer = () => {
   return (
     <ResizePanel
       resizeHandlePos="left"
-      resizeHandleOffset={clientBorder ? 4 : 0}
+      resizeHandleOffset={clientBorder ? 3.5 : 0}
       width={width}
       resizing={resizing}
       onResizing={setResizing}
