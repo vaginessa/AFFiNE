@@ -5,7 +5,12 @@ import { combineLatest, map, switchMap } from 'rxjs';
 
 import { View } from './view';
 
-export type WorkbenchPosition = 'beside' | 'active' | number;
+export type WorkbenchPosition = 'beside' | 'active' | 'head' | 'tail' | number;
+
+interface WorkbenchOpenOptions {
+  at?: WorkbenchPosition;
+  replaceHistory?: boolean;
+}
 
 export class Workbench {
   readonly views = new LiveData([new View()]);
@@ -37,10 +42,7 @@ export class Workbench {
 
   open(
     to: To,
-    {
-      at = 'active',
-      replaceHistory = false,
-    }: { at?: WorkbenchPosition; replaceHistory?: boolean } = {}
+    { at = 'active', replaceHistory = false }: WorkbenchOpenOptions = {}
   ) {
     let view = this.viewAt(at);
     if (!view) {
@@ -58,32 +60,32 @@ export class Workbench {
     }
   }
 
-  openPage(pageId: string) {
-    this.open(`/${pageId}`);
+  openPage(pageId: string, options?: WorkbenchOpenOptions) {
+    this.open(`/${pageId}`, options);
   }
 
-  openCollections() {
-    this.open('/collection');
+  openCollections(options?: WorkbenchOpenOptions) {
+    this.open('/collection', options);
   }
 
-  openCollection(collectionId: string) {
-    this.open(`/collection/${collectionId}`);
+  openCollection(collectionId: string, options?: WorkbenchOpenOptions) {
+    this.open(`/collection/${collectionId}`, options);
   }
 
-  openAll() {
-    this.open('/all');
+  openAll(options?: WorkbenchOpenOptions) {
+    this.open('/all', options);
   }
 
-  openTrash() {
-    this.open('/trash');
+  openTrash(options?: WorkbenchOpenOptions) {
+    this.open('/trash', options);
   }
 
-  openTags() {
-    this.open('/tag');
+  openTags(options?: WorkbenchOpenOptions) {
+    this.open('/tag', options);
   }
 
-  openTag(tagId: string) {
-    this.open(`/tag/${tagId}`);
+  openTag(tagId: string, options?: WorkbenchOpenOptions) {
+    this.open(`/tag/${tagId}`, options);
   }
 
   viewAt(positionIndex: WorkbenchPosition): View | undefined {
@@ -139,6 +141,12 @@ export class Workbench {
     }
     if (positionIndex === 'beside') {
       return this.activeViewIndex.value + 1;
+    }
+    if (positionIndex === 'head') {
+      return 0;
+    }
+    if (positionIndex === 'tail') {
+      return this.views.value.length;
     }
     return positionIndex;
   }

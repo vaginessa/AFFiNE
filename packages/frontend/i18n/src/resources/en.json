@@ -1164,5 +1164,6 @@
   "com.affine.delete-tags.count_one": "{{count}} tag deleted",
   "com.affine.delete-tags.count_other": "{{count}} tags deleted",
   "com.affine.workbench.split-view-menu.keep-this-one": "Keep this one",
+  "com.affine.workbench.split-view.page-menu-open": "Split View",
   "com.affine.search-tags.placeholder": "Type here ..."
 }

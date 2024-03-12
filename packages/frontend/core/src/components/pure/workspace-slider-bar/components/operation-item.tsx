@@ -11,6 +11,7 @@ import {
   FavoriteIcon,
   FilterMinusIcon,
   LinkedPageIcon,
+  SplitViewIcon,
 } from '@blocksuite/icons';
 import { type ReactElement, useMemo } from 'react';
 
@@ -24,6 +25,7 @@ type OperationItemsProps = {
   onAddLinkedPage: () => void;
   onRemoveFromFavourites?: () => void;
   onDelete: () => void;
+  onOpenInSplitView: () => void;
 };
 
 export const OperationItems = ({
@@ -35,6 +37,7 @@ export const OperationItems = ({
   onAddLinkedPage,
   onRemoveFromFavourites,
   onDelete,
+  onOpenInSplitView,
 }: OperationItemsProps) => {
   const t = useAFFiNEI18N();
   const actions = useMemo<
@@ -81,9 +84,6 @@ export const OperationItems = ({
               name: t['Remove from favorites'](),
               click: onRemoveFromFavourites,
             },
-            {
-              element: <MenuSeparator />,
-            },
           ]
         : []),
       ...(inAllowList && onRemoveFromAllowList
@@ -97,18 +97,22 @@ export const OperationItems = ({
               name: t['Remove special filter'](),
               click: onRemoveFromAllowList,
             },
-            {
-              element: <MenuSeparator />,
-            },
           ]
         : []),
-      ...(isReferencePage
-        ? [
-            {
-              element: <MenuSeparator />,
-            },
-          ]
-        : []),
+
+      // open split view
+      {
+        icon: (
+          <MenuIcon>
+            <SplitViewIcon />
+          </MenuIcon>
+        ),
+        name: t['com.affine.workbench.split-view.page-menu-open'](),
+        click: onOpenInSplitView,
+      },
+      {
+        element: <MenuSeparator />,
+      },
       {
         icon: (
           <MenuIcon>
@@ -129,6 +133,7 @@ export const OperationItems = ({
       t,
       inAllowList,
       onRemoveFromAllowList,
+      onOpenInSplitView,
       onDelete,
     ]
   );
