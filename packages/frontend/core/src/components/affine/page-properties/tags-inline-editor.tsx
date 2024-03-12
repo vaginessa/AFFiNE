@@ -7,9 +7,9 @@ import {
 } from '@affine/component';
 import { useNavigateHelper } from '@affine/core/hooks/use-navigate-helper';
 import { WorkspaceLegacyProperties } from '@affine/core/modules/workspace';
+import type { Tag } from '@affine/env/filter';
 import { useAFFiNEI18N } from '@affine/i18n/hooks';
 import { DeleteIcon, MoreHorizontalIcon, TagsIcon } from '@blocksuite/icons';
-import type { Tag } from '@blocksuite/store';
 import { useService } from '@toeverything/infra/di';
 import clsx from 'clsx';
 import { nanoid } from 'nanoid';

@@ -7,8 +7,8 @@ export type ListItem = DocMeta | CollectionMeta | TagMeta;
 
 export interface CollectionMeta extends Collection {
   title: string;
-  createDate?: Date;
-  updatedDate?: Date;
+  createDate?: number;
+  updatedDate?: number;
 }
 
 export type TagMeta = {
