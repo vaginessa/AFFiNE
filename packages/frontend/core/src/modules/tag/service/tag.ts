@@ -41,4 +41,10 @@ export class TagService {
       return get(this.tags).filter(tag => tagIds.includes(tag.id));
     });
   }
+
+  tagByTagId(tagId?: string) {
+    return LiveData.computed(get => {
+      return get(this.tags).find(tag => tag.id === tagId);
+    });
+  }
 }

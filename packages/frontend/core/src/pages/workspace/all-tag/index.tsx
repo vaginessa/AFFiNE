@@ -1,12 +1,10 @@
-import { useTagMetas } from '@affine/core/components/page-list';
 import {
   TagListHeader,
   VirtualizedTagList,
 } from '@affine/core/components/page-list/tags';
 import { CreateOrEditTag } from '@affine/core/components/page-list/tags/create-tag';
-import { useBlockSuiteDocMeta } from '@affine/core/hooks/use-block-suite-page-meta';
-import { useService } from '@toeverything/infra';
-import { Workspace } from '@toeverything/infra';
+import { TagService } from '@affine/core/modules/tag';
+import { LiveData, useLiveData, useService } from '@toeverything/infra';
 import { useCallback, useState } from 'react';
 
 import { ViewBodyIsland, ViewHeaderIsland } from '../../../modules/workbench';
@@ -32,10 +30,31 @@ const EmptyTagListHeader = () => {
 };
 
 export const AllTag = () => {
-  const currentWorkspace = useService(Workspace);
-  const pageMetas = useBlockSuiteDocMeta(currentWorkspace.docCollection);
+  const tagService = useService(TagService);
+  const tags = useLiveData(tagService.tags);
 
-  const { tags, tagMetas, deleteTags } = useTagMetas(pageMetas);
+  const tagMetasLiveDate = LiveData.computed(get => {
+    return tags.map(tag => {
+      return {
+        id: tag.id,
+        title: get(tag.value),
+        color: get(tag.color),
+        pageCount: get(tag.pageIds).length,
+        createDate: get(tag.createDate),
+        updatedDate: get(tag.updateDate),
+      };
+    });
+  });
+  const tagMetas = useLiveData(tagMetasLiveDate);
+
+  const handleDelete = useCallback(
+    (tagIds: string[]) => {
+      tagIds.forEach(tagId => {
+        tagService.deleteTag(tagId);
+      });
+    },
+    [tagService]
+  );
 
   return (
     <>
@@ -48,7 +67,7 @@ export const AllTag = () => {
             <VirtualizedTagList
               tags={tags}
               tagMetas={tagMetas}
-              onTagDelete={deleteTags}
+              onTagDelete={handleDelete}
             />
           ) : (
             <EmptyTagList heading={<EmptyTagListHeader />} />

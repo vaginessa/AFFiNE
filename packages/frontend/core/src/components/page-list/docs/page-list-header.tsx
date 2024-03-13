@@ -1,8 +1,8 @@
 import { Button, Divider, Menu, Scrollable } from '@affine/component';
 import { useAsyncCallback } from '@affine/core/hooks/affine-async-hooks';
 import { useNavigateHelper } from '@affine/core/hooks/use-navigate-helper';
-import { WorkspaceLegacyProperties } from '@affine/core/modules/workspace';
-import type { Collection, Tag } from '@affine/env/filter';
+import { type Tag, TagService } from '@affine/core/modules/tag';
+import type { Collection } from '@affine/env/filter';
 import { useAFFiNEI18N } from '@affine/i18n/hooks';
 import {
   ArrowDownSmallIcon,
@@ -95,8 +95,8 @@ export const TagPageListHeader = ({
   tag: Tag;
   workspaceId: string;
 }) => {
-  const legacyProperties = useService(WorkspaceLegacyProperties);
-  const options = useLiveData(legacyProperties.tagOptions$);
+  const service = useService(TagService);
+  const options = useLiveData(service.tags);
   const t = useAFFiNEI18N();
   const { jumpToTags, jumpToCollection } = useNavigateHelper();
   const collectionService = useService(CollectionService);
@@ -159,10 +159,10 @@ export const TagPageListHeader = ({
               <div
                 className={styles.tagIndicator}
                 style={{
-                  backgroundColor: tagColorMap(tag.color),
+                  backgroundColor: tagColorMap(tag.color.value),
                 }}
               />
-              <div className={styles.tagLabel}>{tag.value}</div>
+              <div className={styles.tagLabel}>{tag.value.value}</div>
               <ArrowDownSmallIcon className={styles.arrowDownSmallIcon} />
             </div>
           </Menu>
@@ -177,7 +177,7 @@ export const TagPageListHeader = ({
 
 const filterOption = (option: Tag, inputValue?: string) => {
   const trimmedValue = inputValue?.trim().toLowerCase() ?? '';
-  const trimmedOptionValue = option.value.trim().toLowerCase();
+  const trimmedOptionValue = option.value.value.trim().toLowerCase();
   return trimmedOptionValue.includes(trimmedValue);
 };
 
@@ -237,9 +237,11 @@ export const TagsEditor = ({ options, onClick }: TagsEditorProps) => {
                 >
                   <div
                     className={styles.tagIcon}
-                    style={{ background: tag.color }}
+                    style={{ background: tag.color.value }}
                   />
-                  <div className={styles.tagSelectorItemText}>{tag.value}</div>
+                  <div className={styles.tagSelectorItemText}>
+                    {tag.value.value}
+                  </div>
                 </Link>
               );
             })}
