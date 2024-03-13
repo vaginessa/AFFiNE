@@ -1,70 +1,67 @@
-import type { Workspace } from '@toeverything/infra';
-import { nanoid } from 'nanoid';
+import type { Tag as TagSchema } from '@affine/env/filter';
+import { LiveData, type PageRecordList } from '@toeverything/infra';
 
 import type { WorkspaceLegacyProperties } from '../../workspace';
 
 export class Tag {
   constructor(
-    value: string,
-    color: string,
+    readonly id: string,
     private readonly properties: WorkspaceLegacyProperties,
-    private readonly workspace: Workspace
-  ) {
-    this.id = nanoid();
-    this.value = value;
-    this.color = color;
-    this.createDate = Date.now();
-    this.updateDate = 0;
-  }
-  readonly id: string;
+    private readonly pageRecordList: PageRecordList
+  ) {}
 
-  value: string;
+  private readonly tagOption = this.properties.tagOptions$.map(
+    tags => tags.find(tag => tag.id === this.id) as TagSchema
+  );
 
-  color: string;
+  value = this.tagOption.map(tag => tag?.value || '');
 
-  readonly createDate: number | undefined;
+  color = this.tagOption.map(tag => tag?.color || '');
 
-  updateDate: number | undefined;
+  createDate = this.tagOption.map(tag => tag?.createDate || Date.now());
 
-  private get pageMetas() {
-    return this.workspace.blockSuiteWorkspace.meta.docMetas;
-  }
-  private getPageMetaByPageId(pageId: string) {
-    return this.pageMetas.find(meta => meta.id === pageId);
-  }
+  updateDate = this.tagOption.map(tag => tag?.updateDate || Date.now());
 
   rename(value: string) {
-    this.value = value;
-    this.updateDate = Date.now();
+    this.properties.updateTagOption(this.id, {
+      id: this.id,
+      value,
+      color: this.color.value,
+    });
   }
 
   changeColor(color: string) {
-    this.color = color;
-    this.updateDate = Date.now();
+    this.properties.updateTagOption(this.id, {
+      id: this.id,
+      value: this.value.value,
+      color,
+    });
   }
 
   tag(pageId: string) {
-    const pageMeta = this.getPageMetaByPageId(pageId);
-    if (!pageMeta) {
+    const pageRecord = this.pageRecordList.record(pageId).value;
+    if (!pageRecord) {
       return;
     }
-    if (pageMeta.tags.includes(this.id)) {
-      return;
-    }
-    this.properties.updatePageTags(pageId, [...pageMeta.tags, this.id]);
+    pageRecord?.setMeta({
+      tags: [...pageRecord.meta.value.tags, this.id],
+    });
   }
 
   untag(pageId: string) {
-    const pageMeta = this.getPageMetaByPageId(pageId);
-    if (!pageMeta) {
+    const pageRecord = this.pageRecordList.record(pageId).value;
+    if (!pageRecord) {
       return;
     }
-    if (!pageMeta.tags.includes(this.id)) {
-      return;
-    }
-    this.properties.updatePageTags(
-      pageId,
-      pageMeta.tags.filter(tagId => tagId !== this.id)
-    );
+    pageRecord?.setMeta({
+      tags: pageRecord.meta.value.tags.filter(tagId => tagId !== this.id),
+    });
   }
+
+  readonly pageIds = LiveData.computed(get => {
+    const pages = get(this.pageRecordList.records);
+    return pages
+      .filter(page => get(page.meta).tags.includes(this.id))
+      .map(page => page.id);
+  });
 }

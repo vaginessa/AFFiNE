@@ -1,4 +1,5 @@
-import type { Workspace } from '@toeverything/infra';
+import { LiveData, type PageRecordList } from '@toeverything/infra';
+import { nanoid } from 'nanoid';
 
 import type { WorkspaceLegacyProperties } from '../workspace';
 import { Tag } from './entities/tag';
@@ -6,29 +7,36 @@ import { Tag } from './entities/tag';
 export class TagService {
   constructor(
     private readonly properties: WorkspaceLegacyProperties,
-    private readonly workspace: Workspace
+    private readonly pageRecordList: PageRecordList
   ) {}
 
-  readonly tags = this.properties.tagOptions$;
-
-  private get pageMetas() {
-    return this.workspace.blockSuiteWorkspace.meta.docMetas;
-  }
+  readonly tags = this.properties.tagOptions$.map(tags =>
+    tags.map(tag => new Tag(tag.id, this.properties, this.pageRecordList))
+  );
 
   createTag(value: string, color: string) {
-    const newTag = new Tag(value, color, this.properties, this.workspace);
-    this.properties.updateTagOptions([...this.tags.value, newTag]);
+    const newId = nanoid();
+    this.properties.updateTagOptions([
+      ...this.properties.tagOptions$.value,
+      {
+        id: newId,
+        value,
+        color,
+      },
+    ]);
   }
 
   deleteTag(tagId: string) {
     this.properties.removeTagOption(tagId);
   }
 
-  getTagsByPageId(pageId: string) {
-    const pageMeta = this.pageMetas.find(meta => meta.id === pageId);
-    if (!pageMeta) {
-      return [];
-    }
-    return this.tags.value.filter(tag => pageMeta.tags.includes(tag.id));
+  tagsByPageId(pageId: string) {
+    return LiveData.computed(get => {
+      const pageRecord = get(this.pageRecordList.record(pageId));
+      if (!pageRecord) return [];
+      const tagIds = get(pageRecord.meta).tags;
+
+      return get(this.tags).filter(tag => tagIds.includes(tag.id));
+    });
   }
 }
