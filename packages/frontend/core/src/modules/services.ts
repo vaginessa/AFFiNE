@@ -1,6 +1,7 @@
 import {
   GlobalCache,
   GlobalState,
+  PageRecordList,
   type ServiceCollection,
   Workspace,
   WorkspaceScope,
@@ -31,7 +32,7 @@ export function configureBusinessServices(services: ServiceCollection) {
     .add(WorkspacePropertiesAdapter, [Workspace])
     .add(CollectionService, [Workspace])
     .add(WorkspaceLegacyProperties, [Workspace])
-    .add(TagService, [WorkspaceLegacyProperties, Workspace]);
+    .add(TagService, [WorkspaceLegacyProperties, PageRecordList]);
 }
 
 export function configureWebInfraServices(services: ServiceCollection) {

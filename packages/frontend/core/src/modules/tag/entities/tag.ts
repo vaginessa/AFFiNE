@@ -27,6 +27,8 @@ export class Tag {
       id: this.id,
       value,
       color: this.color.value,
+      createDate: this.createDate.value,
+      updateDate: Date.now(),
     });
   }
 
@@ -35,6 +37,8 @@ export class Tag {
       id: this.id,
       value: this.value.value,
       color,
+      createDate: this.createDate.value,
+      updateDate: Date.now(),
     });
   }
 

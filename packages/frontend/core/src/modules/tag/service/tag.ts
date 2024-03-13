@@ -1,8 +1,8 @@
 import { LiveData, type PageRecordList } from '@toeverything/infra';
 import { nanoid } from 'nanoid';
 
-import type { WorkspaceLegacyProperties } from '../workspace';
-import { Tag } from './entities/tag';
+import type { WorkspaceLegacyProperties } from '../../workspace';
+import { Tag } from '../entities/tag';
 
 export class TagService {
   constructor(
@@ -22,6 +22,8 @@ export class TagService {
         id: newId,
         value,
         color,
+        createDate: Date.now(),
+        updateDate: Date.now(),
       },
     ]);
   }
