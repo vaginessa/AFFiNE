@@ -47,6 +47,8 @@ export const SplitViewPanel = memo(function SplitViewPanel({
   const workbench = useService(Workbench);
   const activeView = useLiveData(workbench.activeView);
   const views = useLiveData(workbench.views);
+  const isLast = views[views.length - 1] === view;
+
   const {
     attributes,
     listeners,
@@ -84,6 +86,7 @@ export const SplitViewPanel = memo(function SplitViewPanel({
       className={styles.splitViewPanel}
       data-is-dragging={isDragging}
       data-is-active={isActive && views.length > 1}
+      data-is-last={isLast}
     >
       <div
         ref={setNodeRef}

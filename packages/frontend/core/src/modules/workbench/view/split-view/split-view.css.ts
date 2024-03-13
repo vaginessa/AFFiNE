@@ -40,7 +40,7 @@ export const splitViewPanel = style({
     '[data-orientation="horizontal"] &': {
       width: 0,
     },
-    '[data-client-border="false"] &:not(:last-child):not([data-is-dragging="true"])':
+    '[data-client-border="false"] &:not([data-is-last="true"]):not([data-is-dragging="true"])':
       {
         borderRight: `1px solid ${cssVar('borderColor')}`,
       },
