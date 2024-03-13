@@ -102,9 +102,9 @@ export class Workbench {
   }
 
   closeOthers(view: View) {
-    this.active(this.views.value.indexOf(view));
     view.size.next(100);
     this.views.next([view]);
+    this.active(0);
   }
 
   moveView(from: number, to: number) {
@@ -131,8 +131,15 @@ export class Workbench {
       0
     );
     const percentOfTotal = totalViewSize * percent;
-    view.setSize(Number((view.size.value + percentOfTotal).toFixed(4)));
-    nextView.setSize(Number((nextView.size.value - percentOfTotal).toFixed(4)));
+    const newSize = Number((view.size.value + percentOfTotal).toFixed(4));
+    const newNextSize = Number(
+      (nextView.size.value - percentOfTotal).toFixed(4)
+    );
+    // TODO: better strategy to limit size
+    if (newSize / totalViewSize < 0.2 || newNextSize / totalViewSize < 0.2)
+      return;
+    view.setSize(newSize);
+    nextView.setSize(newNextSize);
   }
 
   private indexAt(positionIndex: WorkbenchPosition): number {
